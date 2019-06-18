@@ -1,0 +1,186 @@
+swagger: '2.0'
+info:
+  title: Tasks
+  version: '1.0.0'
+  x-whats-is-new: >
+    - Fix basePath
+  description: >
+    Api for creating and notification tasks from user.
+  contact:
+    name: Tasks API Restful
+    email: daniel_rocha2009@hotmail.com
+host: any.com.br
+basePath: /apis/task-management/v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+
+paths:
+  /tasks:
+    post:
+      tags:
+        - User
+      summary: Create a task
+      description: creating new task.
+      operationId: createTask
+      produces:
+        - application/json
+      parameters:
+        - name: task
+          in: body
+          description: Task payload
+          required: true
+          schema:
+            $ref: '#/definitions/Task'
+      responses:
+        '201':
+          description: Id of created task
+          schema:
+            $ref: '#/definitions/TaskResponse'
+        '401':
+          description: Authorization Failed
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /tasks/{taskId}:
+    get:
+      tags:
+        - User
+      summary: Get a task
+      description: Get a task based on a single ID.
+      operationId: getTask
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: taskId
+          description: Identifier of a task.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: taskId
+          schema:
+            $ref: '#/definitions/Task'
+        '404':
+          description: No Content
+        '401':
+          description: Authorization Failed
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    put:
+      tags:
+        - User
+      summary: Update a task
+      description: Update a task based on a single ID. .
+      operationId: updateTask
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: taskId
+          description: Identifier of a task.
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Updated task object.
+          required: false
+          schema:
+            $ref: "#/definitions/TaskModify"
+      responses:
+        '200':
+          description: Updated Sucessfully
+        '404':
+          description: No Content
+        '401':
+          description: Authorization Failed
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+
+definitions:
+  Task:
+    type: object
+    required:
+      - name
+      - title
+      - dateScheduled
+    properties:
+      taskId:
+        type: string
+        description: taskId
+      name:
+        type: string
+        description: task name
+      title:
+        type: string
+        description: description of task
+      dateScheduled:
+        type: string
+        format: date-time
+        description: date of scheduled.
+
+  TaskModify:
+    type: object
+    properties:
+      name:
+        type: string
+        description: task name
+      title:
+        type: string
+        description: description of task
+      dateScheduled:
+        type: string
+        format: date-time
+        description: date of scheduled.
+
+  TaskResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        description: id generated.
+
+
+  ErrorModel:
+    type: array
+    items:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Code error.
+        message:
+          type: string
+          description: Return message reference code error.
